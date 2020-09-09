@@ -2,24 +2,25 @@ const db = require("../models");
 const Todoitem = db.todoitem;
 const Op = db.Sequelize.Op;
 
-// Create and Save a new Tutorial
+// Create and Save a new todo item
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.title) {
+    if (!req.body.title || !req.body.listname) {
         res.status(400).send({
           message: "Content can not be empty!"
         });
         return;
       }
     
-      // Create a Tutorial
+      // Create a todo item
       const todoitem = {
         title: req.body.title,
         description: req.body.description,
-        // published: req.body.published ? req.body.published : false
+        listname: req.body.listname,
+        done: req.body.done ? req.body.published : false
       };
     
-      // Save Tutorial in the database
+      // Save todo item in the database
       Todoitem.create(todoitem)
         .then(data => {
           res.send(data);
@@ -32,11 +33,12 @@ exports.create = (req, res) => {
         });
 };
 
-// Retrieve all Tutorials from the database.
+// Retrieve all tido items from the database.
 exports.findAll = (req, res) => {
-    const title = req.query.title;
-    var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
-  
+    // const title = req.query.title;
+    // var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+    const listname = req.params.listname;
+    var condition = listname ? { listname: { [Op.iLike]: `%${listname}%` } } : null;
     Todoitem.findAll({ where: condition })
       .then(data => {
         res.send(data);
@@ -44,12 +46,12 @@ exports.findAll = (req, res) => {
       .catch(err => {
         res.status(500).send({
           message:
-            err.message || "Some error occurred while retrieving tutorials."
+            err.message || "Some error occurred while retrieving items from list."
         });
         });
 };
 
-// Find a single Tutorial with an id
+// Find a single todo item with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
@@ -64,11 +66,11 @@ exports.findOne = (req, res) => {
       });
 };
 
-// Update a Tutorial by the id in the request
+// check a todo item by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
-    Todoitem.update(req.body, {
-        where: {id: id}
+    Todoitem.update({done : true}, {
+        where: {id: req.params.id}
     })
     .then(num => {
         if(num == 1){
@@ -83,7 +85,7 @@ exports.update = (req, res) => {
     })
     .catch(err => {
         res.status(500).send({
-            message:  "Error updating Tutorial with id=" + id
+            message:  "Error updating todoitem with id=" + id
         });
     });
 };
@@ -115,8 +117,9 @@ exports.delete = (req, res) => {
 
 // Delete all Tutorials from the database.
 exports.deleteAll = (req, res) => {
+  const listname = req.params.listname;
     Todoitem.destroy({
-        where: {},
+        where: { listname: listname },
         truncate: false
       })
         .then(nums => {

@@ -5,10 +5,13 @@ module.exports = (sequelize, Sequelize) => {
     },
     description: {
       type: Sequelize.STRING
+    },
+    listname: {
+      type: Sequelize.STRING
+    },
+    done: {
+      type: Sequelize.BOOLEAN
     }
-    // published: {
-    //     type: Sequelize.BOOLEAN
-    // }
   });
 
   return Todoitem;

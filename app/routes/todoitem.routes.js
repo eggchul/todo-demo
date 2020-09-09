@@ -7,22 +7,22 @@ module.exports = app => {
     router.post("/", todoitems.create);
   
     // Retrieve all Tutorials
-    router.get("/", todoitems.findAll);
+    router.get("/list/:listname", todoitems.findAll);
   
     // // Retrieve all published Tutorials
     // router.get("/published", todoitem.findAllPublished);
   
     // Retrieve a single Tutorial with id
-    router.get("/:id", todoitems.findOne);
+    router.get("/item/:id", todoitems.findOne);
   
     // Update a Tutorial with id
     router.put("/:id", todoitems.update);
   
     // Delete a Tutorial with id
-    router.delete("/:id", todoitems.delete);
+    router.delete("/item/:id", todoitems.delete);
   
     // Create a new Tutorial
-    router.delete("/", todoitems.deleteAll);
+    router.delete("/list/:listname", todoitems.deleteAll);
   
     app.use('/api/todoitems', router);
   };
